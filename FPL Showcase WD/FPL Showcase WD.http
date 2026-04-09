@@ -1,0 +1,6 @@
+@FPL_Showcase_WD_HostAddress = http://localhost:5274
+
+GET {{FPL_Showcase_WD_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
