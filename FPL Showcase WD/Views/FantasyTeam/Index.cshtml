@@ -1,27 +1,67 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = null;
 }
-<html>
+<!DOCTYPE html>
+<html lang="nl">
 <head>
-    <title>Test</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fantasy Team</title>
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    s
-<h1 class="Header"  style="text-align: center;">
-    Your Team for this week!
-</h1>
-    <hr/>
-    <section class="veld-container">
-        <img src="/Images/voetbalveld.jpg" alt="Voetbalveld" class="veld" style="width: 800px; height: 363px;">
+    <main class="page">
+        <section class="card">
+            <h1 class="title">Fantasy team</h1>
 
-        <!-- Shirt 1 -->
-        <img src="/Images/Shirts/Keepers shirt.png" alt="Keeper" class="shirt shirt-1">
+            <section class="formation" aria-label="4-3-3 formatie">
 
-        <!-- Shirt 2 -->
-        <img src="/Images/Shirts/Spelers shirt.png" alt="Ved 1" class="shirt shirt-2">
+                <section class="row row--3">
+                    <button class="slot" data-position="FWD" data-area="field" data-placeholder="+ FWD">+ FWD</button>
+                    <button class="slot" data-position="FWD" data-area="field" data-placeholder="+ FWD">+ FWD</button>
+                    <button class="slot" data-position="FWD" data-area="field" data-placeholder="+ FWD">+ FWD</button>
+                </section>
+                <section class="row row--3">
+                    <button class="slot" data-position="MID" data-area="field" data-placeholder="+ MID">+ MID</button>
+                    <button class="slot" data-position="MID" data-area="field" data-placeholder="+ MID">+ MID</button>
+                    <button class="slot" data-position="MID" data-area="field" data-placeholder="+ MID">+ MID</button>
+                </section>
+
+                <section class="row row--4">
+                    <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
+                    <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
+                    <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
+                    <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
+                </section>
+
+                <section class="row row--1">
+                    <button class="slot" data-position="GK" data-area="field" data-placeholder="+ GK">+ GK</button>
+                </section>
+
+            </section>
+
+            <section class="bench" aria-label="Wisselspelers">
+                <h2 class="bench-title">Bank</h2>
+                <section class="row row--4">
+                    <button class="slot" data-position="GK" data-area="bench" data-placeholder="+ Bank">+ Bank</button>
+                    <button class="slot" data-position="DEF" data-area="bench" data-placeholder="+ Bank">+ Bank</button>
+                    <button class="slot" data-position="MID" data-area="bench" data-placeholder="+ Bank">+ Bank</button>
+                    <button class="slot" data-position="FWD" data-area="bench" data-placeholder="+ Bank">+ Bank</button>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <section id="player-panel" class="panel" hidden>
+        <section class="panel-card">
+            <header class="panel-header">
+                <h3 id="panel-title">Kies speler</h3>
+                <button id="panel-close" class="panel-close" type="button">×</button>
+            </header>
+            <ul id="player-options" class="panel-list"></ul>
+        </section>
     </section>
 
+    <script src="~/js/fantasy-team.js"></script>
 </body>
 </html>
