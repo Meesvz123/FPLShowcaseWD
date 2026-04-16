@@ -1,0 +1,30 @@
+﻿body {
+}
+
+.veld-container {
+    position: relative;
+    width: 800px; /* pas aan naar jouw afbeelding */
+    height: 363px; /* pas aan naar jouw afbeelding */
+}
+
+.veld {
+    width: 800px;
+    height: 363px;
+    display: block;
+}
+
+.shirt {
+    position: absolute;
+    width: 60px; /* grootte van het shirt */
+}
+
+/* Posities op het veld */
+.shirt-1 {
+    top: 40%; /* 40% vanaf boven */
+    left: 30%; /* 30% vanaf links */
+}
+
+.shirt-2 {
+    top: 60%;
+    left: 55%;
+}
