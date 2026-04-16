@@ -70,11 +70,35 @@ body {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.slot-name {
+    pointer-events: none;
+}
+
+.slot-remove {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    line-height: 18px;
 }
 
 .slot--filled {
     border-style: solid;
     color: #222;
+}
+
+.slot--filled .slot-remove {
+    display: block;
 }
 
 .slot--selected {

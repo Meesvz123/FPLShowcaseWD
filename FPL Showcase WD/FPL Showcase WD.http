@@ -1,6 +1,10 @@
-@FPL_Showcase_WD_HostAddress = http://localhost:5274
+@FPL_Showcase_WD_HostAddress = https://localhost:7244
 
-GET {{FPL_Showcase_WD_HostAddress}}/weatherforecast/
+POST {{FPL_Showcase_WD_HostAddress}}/api/sync/players?force=true
+Accept: application/json
+
+###
+GET {{FPL_Showcase_WD_HostAddress}}/api/fantasy/players
 Accept: application/json
 
 ###
