@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Authentication.Negotiate;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllersWithViews();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
@@ -13,7 +11,6 @@ builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    // By default, all incoming requests will be authorized according to the default policy.
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
@@ -26,9 +23,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // <-- required for /Images/* from wwwroot
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=FantasyTeam}/{action=Index}/{id?}");
 
 app.Run();
