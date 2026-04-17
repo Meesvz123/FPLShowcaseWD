@@ -45,6 +45,7 @@ body {
     flex-direction: column;
     gap: 0;
     padding: 12px;
+    background: #e8f5e9;
     border-radius: 12px;
     justify-content: space-evenly;
     min-height: 0;
@@ -52,7 +53,7 @@ body {
 
 .row {
     display: grid;
-    gap: 240px;
+    gap: 12px;
     justify-content: center;
 }
 
@@ -96,10 +97,13 @@ body {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background-color: red;
+    background-color: #c62828;
     color: white;
     font-size: 14px;
     line-height: 18px;
+    border: none;
+    cursor: pointer;
+    display: none;
 }
 
 .slot--filled {
@@ -170,4 +174,51 @@ body {
     background: #fafafa;
     border-radius: 8px;
     cursor: pointer;
+}
+
+.team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.save-team {
+    border: none;
+    background: #4caf50;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-status {
+    min-height: 20px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #2e7d32;
+}
+
+.save-status[data-state="error"] {
+    color: #b00020;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+}
+
+.slot:focus-visible,
+.panel-option:focus-visible,
+.save-team:focus-visible,
+.panel-close:focus-visible,
+.slot-remove:focus-visible {
+    outline: 3px solid #1b5e20;
+    outline-offset: 2px;
 }
