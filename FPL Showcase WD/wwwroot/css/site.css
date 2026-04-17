@@ -12,7 +12,6 @@ body {
 body {
     margin: 0;
     font-family: "Segoe UI", system-ui, sans-serif;
-    background: #f5f5f5;
     overflow: hidden;
 }
 
@@ -44,8 +43,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 12px;
-    background: #e8f5e9;
+    padding: 12px
     border-radius: 12px;
     justify-content: space-evenly;
     min-height: 0;
@@ -53,7 +51,7 @@ body {
 
 .row {
     display: grid;
-    gap: 12px;
+    gap: 240px;
     justify-content: center;
 }
 

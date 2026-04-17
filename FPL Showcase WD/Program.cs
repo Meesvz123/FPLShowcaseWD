@@ -12,6 +12,16 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
+// threat id 69
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "__Host-FPL-CSRF";
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.Configure<ApiFootballOptions>(builder.Configuration.GetSection("ApiFootball"));
@@ -31,21 +41,6 @@ builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
    .AddNegotiate();
 
 builder.Services.AddAuthorization(options => { options.FallbackPolicy = options.DefaultPolicy; });
-
-builder.Services.AddAntiforgery(options =>
-{
-    options.HeaderName = "X-CSRF-TOKEN";
-    options.Cookie.Name = "__Host-FPL-CSRF";
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.HttpOnly = true;
-});
-
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.Strict;
-    options.Secure = CookieSecurePolicy.Always;
-});
 
 var app = builder.Build();
 
