@@ -4,26 +4,34 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-family: "Segoe UI", system-ui, sans-serif;
     background: #f5f5f5;
-    color: #222;
+    overflow: hidden;
 }
 
 .page {
     min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 24px;
+    display: block;
+    padding: 0;
 }
 
 .card {
-    width: min(760px, 100%);
+    width: 100vw;
+    height: 100dvh;
     background: #fff;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.1);
+    border-radius: 0;
+    padding: 16px;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .title {
@@ -32,17 +40,19 @@ body {
 }
 
 .formation {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 18px;
-    background: #e8f5e9;
+    gap: 0;
+    padding: 12px;
     border-radius: 12px;
+    justify-content: space-evenly;
+    min-height: 0;
 }
 
 .row {
     display: grid;
-    gap: 12px;
+    gap: 240px;
     justify-content: center;
 }
 
@@ -51,9 +61,9 @@ body {
 .row--4 { grid-template-columns: repeat(4, minmax(90px, 120px)); }
 
 .bench {
-    margin-top: 20px;
+    margin-top: 0;
     border-top: 1px solid #e1e1e1;
-    padding-top: 16px;
+    padding-top: 8px;
 }
 
 .bench-title {
@@ -70,11 +80,35 @@ body {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.slot-name {
+    pointer-events: none;
+}
+/*Remove knop*/
+.slot-remove {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    line-height: 18px;
 }
 
 .slot--filled {
     border-style: solid;
     color: #222;
+}
+
+.slot--filled .slot-remove {
+    display: block;
 }
 
 .slot--selected {

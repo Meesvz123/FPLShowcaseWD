@@ -11,11 +11,23 @@
     let activeSlot = null;
     let selectedSlot = null;
 
+    //Zorgt ervoor dat de slot gecleared wordt
+    const clearSlot = (slot) => {
+        slot.dataset.playerId = "";
+        slot.dataset.playerName = "";
+        slot.classList.remove("slot--filled");
+        slot.textContent = slot.dataset.placeholder ?? "+";
+    };
+
     const setSlotPlayer = (slot, player) => {
         slot.dataset.playerId = player.id;
         slot.dataset.playerName = player.naam;
-        slot.textContent = player.naam;
         slot.classList.add("slot--filled");
+        //WCAG gedeelte om de speler te verwijderen door een popup onder de knop te maken over verwijderen.
+        slot.innerHTML = `
+            <span class="slot-name">${player.naam}</span>
+            <span class="slot-remove" title="Verwijder speler" aria-hidden="true">×</span>
+        `;
     };
 
     const getSelectedIds = () => {
@@ -67,7 +79,13 @@
     };
 
     slots.forEach(slot => {
-        slot.addEventListener("click", () => {
+        slot.addEventListener("click", (e) => {
+            if (e.target.closest(".slot-remove")) {
+                clearSlot(slot);
+                clearSelection();
+                return;
+            }
+
             const isFilled = !!slot.dataset.playerName;
 
             if (!isFilled) {

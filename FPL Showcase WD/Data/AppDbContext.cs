@@ -1,4 +1,4 @@
-    using FPL_Showcase_WD.Models;
+using FPL_Showcase_WD.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPL_Showcase_WD.Data;
