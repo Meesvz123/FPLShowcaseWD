@@ -4,14 +4,26 @@
     const panelTitle = document.getElementById("panel-title");
     const panelClose = document.getElementById("panel-close");
     const optionsList = document.getElementById("player-options");
+    const saveButton = document.getElementById("save-team");
+    const status = document.getElementById("save-status");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
+
+    const setStatus = (message, isError = false) => {
+        if (!status) return;
+        status.textContent = message;
+        status.dataset.state = isError ? "error" : "ok";
+    };
 
     const response = await fetch("/api/fantasy/players");
+    if (!response.ok) {
+        setStatus("Spelers laden mislukt.", true);
+        return;
+    }
     const players = await response.json();
 
     let activeSlot = null;
     let selectedSlot = null;
 
-    //Zorgt ervoor dat de slot gecleared wordt
     const clearSlot = (slot) => {
         slot.dataset.playerId = "";
         slot.dataset.playerName = "";
@@ -23,11 +35,20 @@
         slot.dataset.playerId = player.id;
         slot.dataset.playerName = player.naam;
         slot.classList.add("slot--filled");
-        //WCAG gedeelte om de speler te verwijderen door een popup onder de knop te maken over verwijderen.
-        slot.innerHTML = `
-            <span class="slot-name">${player.naam}</span>
-            <span class="slot-remove" title="Verwijder speler" aria-hidden="true">×</span>
-        `;
+
+        slot.replaceChildren();
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "slot-name";
+        nameSpan.textContent = player.naam;
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "slot-remove";
+        removeButton.setAttribute("aria-label", "Verwijder speler");
+        removeButton.textContent = "×";
+
+        slot.append(nameSpan, removeButton);
     };
 
     const getSelectedIds = () => {
@@ -128,10 +149,69 @@
         activeSlot = null;
     });
 
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !panel.hidden) {
+            panel.hidden = true;
+            activeSlot = null;
+            clearSelection();
+        }
+    });
+
     panel.addEventListener("click", (e) => {
         if (e.target === panel) {
             panel.hidden = true;
             activeSlot = null;
         }
+    });
+
+    const buildTeamPayload = () => {
+        const slotsPayload = [];
+        slots.forEach((slot, index) => {
+            const playerId = Number(slot.dataset.playerId);
+            if (!playerId) return;
+
+            slotsPayload.push({
+                playerId,
+                position: slot.dataset.position,
+                area: slot.dataset.area,
+                slotIndex: index
+            });
+        });
+
+        return {
+            name: "Mijn team",
+            slots: slotsPayload
+        };
+    };
+
+    saveButton.addEventListener("click", async () => {
+        const payload = buildTeamPayload();
+
+        if (payload.slots.length === 0) {
+            setStatus("Kies eerst spelers.", true);
+            return;
+        }
+
+        if (!csrfToken) {
+            setStatus("CSRF-token ontbreekt.", true);
+            return;
+        }
+
+        const result = await fetch("/api/fantasy/team", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!result.ok) {
+            const text = await result.text();
+            setStatus(`Opslaan mislukt: ${text}`, true);
+            return;
+        }
+
+        setStatus("Team opgeslagen.");
     });
 })();

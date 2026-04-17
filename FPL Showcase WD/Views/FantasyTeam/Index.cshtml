@@ -1,21 +1,27 @@
-﻿@{
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
     Layout = null;
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
 }
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="@tokens.RequestToken" />
     <title>Fantasy Team</title>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <main class="page">
         <section class="card">
-            <h1 class="title">Fantasy team</h1>
+            <header class="team-header">
+                <h1 class="title">Fantasy team</h1>
+                <button id="save-team" class="save-team" type="button" aria-label="Sla team op">Opslaan</button>
+            </header>
+            <p id="save-status" class="save-status" role="status" aria-live="polite"></p>
 
             <section class="formation" aria-label="4-3-3 formatie">
-
                 <section class="row row--3">
                     <button class="slot" data-position="FWD" data-area="field" data-placeholder="+ FWD">+ FWD</button>
                     <button class="slot" data-position="FWD" data-area="field" data-placeholder="+ FWD">+ FWD</button>
@@ -26,18 +32,15 @@
                     <button class="slot" data-position="MID" data-area="field" data-placeholder="+ MID">+ MID</button>
                     <button class="slot" data-position="MID" data-area="field" data-placeholder="+ MID">+ MID</button>
                 </section>
-
                 <section class="row row--4">
                     <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
                     <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
                     <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
                     <button class="slot" data-position="DEF" data-area="field" data-placeholder="+ DEF">+ DEF</button>
                 </section>
-
                 <section class="row row--1">
                     <button class="slot" data-position="GK" data-area="field" data-placeholder="+ GK">+ GK</button>
                 </section>
-
             </section>
 
             <section class="bench" aria-label="Wisselspelers">
@@ -52,12 +55,13 @@
         </section>
     </main>
 
-    <section id="player-panel" class="panel" hidden>
+    <section id="player-panel" class="panel" hidden role="dialog" aria-modal="true" aria-labelledby="panel-title" aria-describedby="panel-desc">
         <section class="panel-card">
             <header class="panel-header">
                 <h3 id="panel-title">Kies speler</h3>
-                <button id="panel-close" class="panel-close" type="button">×</button>
+                <button id="panel-close" class="panel-close" type="button" aria-label="Sluit spelerlijst">×</button>
             </header>
+            <p id="panel-desc" class="visually-hidden">Kies een speler uit de lijst.</p>
             <ul id="player-options" class="panel-list"></ul>
         </section>
     </section>
