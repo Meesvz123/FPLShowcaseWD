@@ -11,6 +11,7 @@
     let activeSlot = null;
     let selectedSlot = null;
 
+    //Zorgt ervoor dat de slot gecleared wordt
     const clearSlot = (slot) => {
         slot.dataset.playerId = "";
         slot.dataset.playerName = "";
@@ -22,6 +23,7 @@
         slot.dataset.playerId = player.id;
         slot.dataset.playerName = player.naam;
         slot.classList.add("slot--filled");
+        //WCAG gedeelte om de speler te verwijderen door een popup onder de knop te maken over verwijderen.
         slot.innerHTML = `
             <span class="slot-name">${player.naam}</span>
             <span class="slot-remove" title="Verwijder speler" aria-hidden="true">×</span>
