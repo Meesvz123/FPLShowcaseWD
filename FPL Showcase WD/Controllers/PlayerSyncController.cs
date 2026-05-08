@@ -1,4 +1,4 @@
-    using FPL_Showcase_WD.Data;
+using FPL_Showcase_WD.Data;
 using FPL_Showcase_WD.Models;
 using FPL_Showcase_WD.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +11,7 @@ namespace FPL_Showcase_WD.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("api/sync")]
+[Authorize(Roles = "Admin")]
 public sealed class PlayerSyncController(
     AppDbContext db,
     IApiFootballClient apiFootballClient,
