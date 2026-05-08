@@ -105,7 +105,7 @@ app.UseAntiforgery();
 app.MapControllers();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=FantasyTeam}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 using (var scope = app.Services.CreateScope())
 {
