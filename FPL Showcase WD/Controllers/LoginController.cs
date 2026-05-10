@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FPL_Showcase_WD.Controllers;
 
 [AllowAnonymous]
-public sealed class LoginController(SignInManager<ApplicationUser> signInManager) : Controller
+[EnableRateLimiting("AuthLimiter")]
+public sealed class LoginController(
+    SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager) : Controller
 {
     [HttpGet]
     public IActionResult Index() => View(new LoginViewModel());
@@ -20,8 +24,15 @@ public sealed class LoginController(SignInManager<ApplicationUser> signInManager
             return View(model);
         }
 
+        var user = await userManager.FindByEmailAsync(model.Email);
+        if (user is null)
+        {
+            ModelState.AddModelError(string.Empty, "Ongeldige login.");
+            return View(model);
+        }
+
         var result = await signInManager.PasswordSignInAsync(
-            model.Email,
+            user,
             model.Password,
             model.RememberMe,
             lockoutOnFailure: false);
@@ -30,6 +41,11 @@ public sealed class LoginController(SignInManager<ApplicationUser> signInManager
         {
             ModelState.AddModelError(string.Empty, "Ongeldige login.");
             return View(model);
+        }
+
+        if (await userManager.IsInRoleAsync(user, "Admin"))
+        {
+            return RedirectToAction("All", "FantasyTeam");
         }
 
         return RedirectToAction("Index", "FantasyTeam");

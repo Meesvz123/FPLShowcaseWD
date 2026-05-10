@@ -1,16 +1,41 @@
-    using FPL_Showcase_WD.Data;
+using FPL_Showcase_WD.Data;
 using FPL_Showcase_WD.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPL_Showcase_WD.Controllers;
 
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 [Route("api/fantasy/team")]
-public sealed class FantasyTeamApiController(AppDbContext db) : ControllerBase
+public sealed class FantasyTeamApiController(AppDbContext db, UserManager<ApplicationUser> userManager) : ControllerBase
 {
+    public sealed record SwapRequest(int PlayerOutId, int PlayerInId);
+
+    [HttpGet]
+    public async Task<ActionResult<FantasyTeamDto>> GetMyTeam()
+    {
+        var userId = userManager.GetUserId(User);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        var team = await db.FantasyTeams
+            .Include(t => t.Slots)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+
+        if (team is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(FantasyTeamDto.From(team));
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTeam([FromBody] SaveFantasyTeamRequest request)
@@ -42,10 +67,31 @@ public sealed class FantasyTeamApiController(AppDbContext db) : ControllerBase
             return BadRequest("One or more players do not exist.");
         }
 
-        var team = new FantasyTeam
+        var userId = userManager.GetUserId(User);
+        if (string.IsNullOrWhiteSpace(userId))
         {
-            Name = request.Name.Trim()
-        };
+            return Unauthorized();
+        }
+
+        var team = await db.FantasyTeams
+            .Include(t => t.Slots)
+            .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+
+        if (team is null)
+        {
+            team = new FantasyTeam
+            {
+                ApplicationUserId = userId,
+                Name = request.Name.Trim()
+            };
+            db.FantasyTeams.Add(team);
+        }
+        else
+        {
+            team.Name = request.Name.Trim();
+            db.FantasyTeamSlots.RemoveRange(team.Slots);
+            team.Slots.Clear();
+        }
 
         team.Slots = request.Slots.Select(s => new FantasyTeamSlot
         {
@@ -55,9 +101,45 @@ public sealed class FantasyTeamApiController(AppDbContext db) : ControllerBase
             SlotIndex = s.SlotIndex
         }).ToList();
 
-        db.FantasyTeams.Add(team);
         await db.SaveChangesAsync();
 
-        return Ok(new { team.Id, team.Name });
+        return Ok(new { team.TeamIdentifier, team.Name });
+    }
+
+    [HttpPatch("wissel/{teamIdentifier:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Wissel(Guid teamIdentifier, [FromBody] SwapRequest request)
+    {
+        var team = await db.FantasyTeams
+            .Include(t => t.Slots)
+            .FirstOrDefaultAsync(t => t.TeamIdentifier == teamIdentifier);
+
+        if (team is null)
+        {
+            return NotFound();
+        }
+
+        var userId = userManager.GetUserId(User);
+        if (team.ApplicationUserId != userId)
+        {
+            return Forbid();
+        }
+
+        var slotToSwap = team.Slots.FirstOrDefault(s => s.PlayerId == request.PlayerOutId);
+        if (slotToSwap is null)
+        {
+            return BadRequest("Wisselspeler is geen onderdeel van het team.");
+        }
+
+        var incomingPlayerExists = await db.Players.AnyAsync(p => p.Id == request.PlayerInId);
+        if (!incomingPlayerExists)
+        {
+            return BadRequest("Inkomende speler bestaat niet.");
+        }
+
+        slotToSwap.PlayerId = request.PlayerInId;
+        await db.SaveChangesAsync();
+
+        return Ok(FantasyTeamDto.From(team));
     }
 }

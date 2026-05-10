@@ -94,6 +94,11 @@ namespace FPL_Showcase_WD.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
 
@@ -103,6 +108,8 @@ namespace FPL_Showcase_WD.Migrations
                         .HasColumnType("varchar(60)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("FantasyTeams");
                 });
@@ -304,6 +311,17 @@ namespace FPL_Showcase_WD.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FPL_Showcase_WD.Models.FantasyTeam", b =>
+                {
+                    b.HasOne("FPL_Showcase_WD.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("FPL_Showcase_WD.Models.FantasyTeamSlot", b =>

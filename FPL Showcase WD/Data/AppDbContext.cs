@@ -15,6 +15,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<FantasyTeam>()
+            .HasOne(t => t.ApplicationUser)
+            .WithMany()
+            .HasForeignKey(t => t.ApplicationUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<FantasyTeamSlot>()
             .HasOne(s => s.FantasyTeam)
             .WithMany(t => t.Slots)

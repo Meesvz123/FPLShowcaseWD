@@ -4,21 +4,36 @@ using FPL_Showcase_WD.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+var isDevelopment = builder.Environment.IsDevelopment();
+var cookiePrefix = isDevelopment ? "FPL" : "__Host-FPL";
 
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("AuthLimiter", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+});
+
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-CSRF-TOKEN";
-    options.Cookie.Name = "__Host-FPL-CSRF";
+    options.Cookie.Name = $"{cookiePrefix}-CSRF";
     options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
 });
 
@@ -54,9 +69,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Login";
     options.AccessDeniedPath = "/Login";
-    options.Cookie.Name = "__Host-FPL-Auth";
+    options.Cookie.Name = $"{cookiePrefix}-Auth";
     options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
 });
 
 builder.Services.AddAuthorization(options =>
@@ -95,6 +110,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseRateLimiter();
+
 app.UseCookiePolicy();
 
 app.UseAuthentication();
@@ -122,31 +142,5 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
-
-    var seed = app.Configuration.GetSection("SeedUsers");
-    await SeedUserAsync(userManager, "Admin", seed["AdminEmail"], seed["AdminPassword"]);
-    await SeedUserAsync(userManager, "User", seed["UserEmail"], seed["UserPassword"]);
 }
-
-static async Task SeedUserAsync(UserManager<ApplicationUser> userManager, string role, string? email, string? password)
-{
-    if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-    {
-        return;
-    }
-
-    var user = await userManager.FindByEmailAsync(email);
-    if (user is null)
-    {
-        user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
-        var result = await userManager.CreateAsync(user, password);
-        if (!result.Succeeded) return;
-    }
-
-    if (!await userManager.IsInRoleAsync(user, role))
-    {
-        await userManager.AddToRoleAsync(user, role);
-    }
-}
-
 app.Run();
