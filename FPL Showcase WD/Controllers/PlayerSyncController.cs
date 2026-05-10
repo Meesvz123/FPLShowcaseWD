@@ -1,4 +1,4 @@
-    using FPL_Showcase_WD.Data;
+using FPL_Showcase_WD.Data;
 using FPL_Showcase_WD.Models;
 using FPL_Showcase_WD.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +9,8 @@ using Microsoft.Extensions.Options;
 namespace FPL_Showcase_WD.Controllers;
 
 [ApiController]
-[AllowAnonymous]
 [Route("api/sync")]
+[Authorize(Roles = "Admin")]
 public sealed class PlayerSyncController(
     AppDbContext db,
     IApiFootballClient apiFootballClient,
@@ -37,39 +37,16 @@ public sealed class PlayerSyncController(
         var entities = apiPlayers
             .GroupBy(p => p.Player.Id)
             .Select(g => g.First())
-            .Select(p =>
+            .Select(p => new Player
             {
-                var stats = p.Statistics.FirstOrDefault();
-                var position = MapPosition(stats?.Games?.Position);
-                var club = stats?.Team?.Name ?? string.Empty;
+                Id = p.Player.Id,
 
-                return new Player
-                {
-                    Id = p.Player.Id,
-                    Naam = p.Player.Name,
-                    Positie = position,
-                    Club = club,
-                    Prijs = 0,
-                    Statistieken = 0
-                };
-            }).ToList();
+            })
+            .ToList();
 
         db.Players.AddRange(entities);
         await db.SaveChangesAsync();
 
-        return Ok(new { count = entities.Count });
-    }
-
-    private static string MapPosition(string? apiPosition)
-    {
-        return apiPosition?.Trim().ToLowerInvariant() switch
-        {
-            "goalkeeper" => "GK",
-            "defender" => "DEF",
-            "midfielder" => "MID",
-            "attacker" => "FWD",
-            "forward" => "FWD",
-            _ => "BENCH"
-        };
+        return Ok(new { count = entities.Count, season });
     }
 }
