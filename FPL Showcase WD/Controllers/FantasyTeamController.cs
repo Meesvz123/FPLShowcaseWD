@@ -22,4 +22,5 @@ public sealed class FantasyTeamController(AppDbContext db) : Controller
 
         return View(teams);
     }
+
 }
