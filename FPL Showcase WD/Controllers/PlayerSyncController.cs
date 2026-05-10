@@ -40,10 +40,7 @@ public sealed class PlayerSyncController(
             .Select(p => new Player
             {
                 Id = p.Player.Id,
-                Name = p.Player.Name,
-                FirstName = p.Player.Firstname,
-                LastName = p.Player.Lastname,
-                PhotoUrl = p.Player.Photo
+
             })
             .ToList();
 

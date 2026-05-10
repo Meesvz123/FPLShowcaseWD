@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FPL_Showcase_WD.Models;
 
 public sealed class FantasyTeam
 {
     public int Id { get; set; }
-
+    [NotMapped]
     public Guid TeamIdentifier { get; set; } = Guid.NewGuid();
 
     [Required, MaxLength(450)]
