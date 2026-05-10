@@ -1,0 +1,44 @@
+@model IReadOnlyList<FPL_Showcase_WD.Models.FantasyTeam>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alle teams</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <main class="page">
+        <section class="card">
+            <header class="team-header">
+                <h1 class="title">Alle teams</h1>
+            </header>
+
+            <table class="team-table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Gebruiker</th>
+                        <th>Gemaakt</th>
+                        <th>Spelers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var team in Model)
+                {
+                    <tr>
+                        <td>@team.Name</td>
+                        <td>@(team.ApplicationUser?.Email ?? "-")</td>
+                        <td>@team.CreatedAtUtc.ToLocalTime().ToString("g")</td>
+                        <td>@team.Slots.Count</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

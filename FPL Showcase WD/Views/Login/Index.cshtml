@@ -1,0 +1,40 @@
+﻿@model FPL_Showcase_WD.Models.LoginViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    Layout = null;
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="@tokens.RequestToken" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<main class="page">
+    <section class="card">
+        <h1 class="title">Login</h1>
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <label>
+                Email
+                <input asp-for="Email" type="email" autocomplete="username" />
+            </label>
+            <label>
+                Wachtwoord
+                <input asp-for="Password" type="password" autocomplete="current-password" />
+            </label>
+            <label>
+                <input asp-for="RememberMe" type="checkbox" />
+                Onthoud mij
+            </label>
+            <button type="submit">Inloggen</button>
+            <div asp-validation-summary="All"></div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

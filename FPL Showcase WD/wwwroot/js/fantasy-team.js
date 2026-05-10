@@ -1,5 +1,5 @@
 (async () => {
-    const slots = document.querySelectorAll(".slot");
+    const slots = Array.from(document.querySelectorAll(".slot"));
     const panel = document.getElementById("player-panel");
     const panelTitle = document.getElementById("panel-title");
     const panelClose = document.getElementById("panel-close");
@@ -50,6 +50,31 @@
 
         slot.append(nameSpan, removeButton);
     };
+
+    const loadTeam = async () => {
+        const teamResponse = await fetch("/api/fantasy/team");
+        if (teamResponse.status === 404) return;
+
+        if (!teamResponse.ok) {
+            setStatus("Team laden mislukt.", true);
+            return;
+        }
+
+        const team = await teamResponse.json();
+        slots.forEach(clearSlot);
+
+        team.slots.forEach(slotInfo => {
+            const slot = slots[slotInfo.slotIndex];
+            if (!slot) return;
+
+            const player = players.find(p => Number(p.id) === slotInfo.playerId);
+            if (!player) return;
+
+            setSlotPlayer(slot, player);
+        });
+    };
+
+    await loadTeam();
 
     const getSelectedIds = () => {
         const ids = new Set();
