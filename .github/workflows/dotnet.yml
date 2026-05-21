@@ -1,7 +1,5 @@
 # This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET Web App CI
 
 on:
   push:
@@ -11,27 +9,33 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: 10.0.x # Let op: zorg dat dit matcht met de versie in je global.json of .csproj
+
+
     - name: Restore dependencies
       run: dotnet restore
+
+    # We bouwen hier direct in 'Release' configuratie, omdat dit een webapp is die uiteindelijk live gaat.
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build --configuration Release --no-restore
 
-      - name: Voer unit tests uit en genereer rapport
-        run: dotnet test --configuration Release --verbosity normal --results-directory "TestResults" --logger "trx;LogFileName=testresults.trx"
+    # Gecombineerde test-stap: test de Release build direct en maak het rapport aan.
+    - name: Voer unit tests uit en genereer rapport
+      run: dotnet test --configuration Release --no-build --verbosity normal --results-directory "TestResults" --logger "trx;LogFileName=testresults.trx"
 
-      - name: Upload test resultaten
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: TestResults/testresults.trx
+    # Gecorrigeerde inspringing voor het uploaden van het testrapport
+    - name: Upload test resultaten
+      uses: actions/upload-artifact@v4
+      if: always() # Zorgt ervoor dat testresultaten OOK worden geüpload als een test faalt!
+      with:
+        name: test-results
+        path: TestResults/testresults.trx
