@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="FPL Showcase WD/FPL Showcase WD.csproj" />
+  <Project Path="UITestFPLShowcase/UITestFPLShowcase.csproj" Id="28138141-e109-49b5-9f66-ff9b34c0a7d2" />
+  <Project Path="XUnitTestFPLShowcase/XUnitTestFPLShowcase.csproj" Id="ec223b4a-83c8-4fff-b67f-79700b819ef4" />
 </Solution>
