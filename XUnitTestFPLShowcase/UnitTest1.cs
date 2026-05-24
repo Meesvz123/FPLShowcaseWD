@@ -63,7 +63,7 @@ namespace FPLShowcaseWD.Tests
         }
     }
 
-    // --- De daadwerkelijke Unit Tests ---
+
     public class FantasyTeamTests
     {
         [Fact]
