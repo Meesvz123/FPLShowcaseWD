@@ -1,0 +1,44 @@
+﻿@model FPL_Showcase_WD.Models.RegisterViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    Layout = null;
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="@tokens.RequestToken" />
+    <title>Registreren</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="login-body">
+    <main class="page page--login">
+        <section class="card card--login">
+            <h1 class="title">Registreren</h1>
+            <form method="post" class="login-form">
+                @Html.AntiForgeryToken()
+                <label>
+                    Email
+                    <input asp-for="Email" type="email" autocomplete="username" />
+                </label>
+                <label>
+                    Wachtwoord
+                    <input asp-for="Password" type="password" autocomplete="new-password" />
+                </label>
+                <label>
+                    Herhaal wachtwoord
+                    <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" />
+                </label>
+                <button type="submit">Account maken</button>
+                <div asp-validation-summary="All" class="validation-summary"></div>
+                <p class="auth-link">
+                    Heb je al een account?
+                    <a asp-controller="Login" asp-action="Index">Inloggen</a>
+                </p>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

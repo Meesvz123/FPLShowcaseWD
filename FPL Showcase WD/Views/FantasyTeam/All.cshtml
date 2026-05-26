@@ -2,7 +2,6 @@
 @{
     Layout = null;
     var totalTeams = Model?.Count ?? 0;
-    var totalPlayers = Model?.Sum(t => t.Slots.Count) ?? 0;
 }
 <!DOCTYPE html>
 <html lang="nl">
@@ -11,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alle teams</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body class="admin-body">
     <main class="page page--admin">
@@ -20,16 +20,16 @@
                     <h1 class="title">Alle teams</h1>
                     <p class="subtitle">Overzicht van alle ingediende fantasy teams.</p>
                 </div>
+                <form asp-controller="Login" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="logout-button">Uitloggen</button>
+                </form>
             </header>
 
             <section class="admin-stats" aria-label="Admin statistieken">
                 <div class="stat-card">
                     <span class="stat-label">Teams</span>
                     <span class="stat-value">@totalTeams</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Geselecteerde spelers</span>
-                    <span class="stat-value">@totalPlayers</span>
                 </div>
             </section>
 
@@ -40,7 +40,7 @@
                             <th>Naam</th>
                             <th>Gebruiker</th>
                             <th>Gemaakt</th>
-                            <th>Spelers</th>
+                            <th>Acties</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +50,13 @@
                             <td>@team.Name</td>
                             <td>@(team.ApplicationUser?.Email ?? "-")</td>
                             <td>@team.CreatedAtUtc.ToLocalTime().ToString("g")</td>
-                            <td>@team.Slots.Count</td>
+                            <td class="table-actions">
+                                <a class="action-link" asp-action="Edit" asp-route-id="@team.Id">Aanpassen</a>
+                                <form asp-action="Delete" asp-route-id="@team.Id" method="post" class="inline-form">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="action-link action-link--danger" onclick="return confirm('Team verwijderen?')">Verwijderen</button>
+                                </form>
+                            </td>
                         </tr>
                     }
                     </tbody>
@@ -58,5 +64,12 @@
             </div>
         </section>
     </main>
+
+    <script>
+        // This script can be used for any future JavaScript functionality
+        $(document).ready(function () {
+            console.log("Admin teams page ready.");
+        });
+    </script>
 </body>
 </html>

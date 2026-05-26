@@ -81,6 +81,8 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+builder.Services.AddScoped<PlayerDataSeeder>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -142,5 +144,8 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
+
+    var playerSeeder = scope.ServiceProvider.GetRequiredService<PlayerDataSeeder>();
+    await playerSeeder.SeedAsync();
 }
 app.Run();

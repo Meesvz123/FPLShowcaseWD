@@ -7,11 +7,21 @@
     const saveButton = document.getElementById("save-team");
     const status = document.getElementById("save-status");
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
+    const teamId = document.body.dataset.teamId;
+    const teamName = document.body.dataset.teamName;
+    const teamQuery = teamId ? `?teamId=${encodeURIComponent(teamId)}` : "";
+    const teamUrl = `/api/fantasy/team${teamQuery}`;
 
     const setStatus = (message, isError = false) => {
         if (!status) return;
         status.textContent = message;
         status.dataset.state = isError ? "error" : "ok";
+    };
+
+    const formatPrice = (value) => {
+        if (!value || Number.isNaN(value)) return "€-";
+        const millions = value / 1_000_000;
+        return `€${millions.toFixed(1)}m`;
     };
 
     const response = await fetch("/api/fantasy/players");
@@ -52,7 +62,7 @@
     };
 
     const loadTeam = async () => {
-        const teamResponse = await fetch("/api/fantasy/team");
+        const teamResponse = await fetch(teamUrl);
         if (teamResponse.status === 404) return;
 
         if (!teamResponse.ok) {
@@ -111,7 +121,7 @@
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "panel-option";
-            btn.textContent = `${player.naam} (${player.club})`;
+            btn.textContent = `${player.naam} (${player.club}) • ${player.positie} • ${formatPrice(player.prijs)}`;
             btn.addEventListener("click", () => {
                 setSlotPlayer(activeSlot, player);
                 panel.hidden = true;
@@ -204,7 +214,7 @@
         });
 
         return {
-            name: "Mijn team",
+            name: teamName?.trim() || "Mijn team",
             slots: slotsPayload
         };
     };
@@ -222,7 +232,7 @@
             return;
         }
 
-        const result = await fetch("/api/fantasy/team", {
+        const result = await fetch(teamUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
