@@ -1,4 +1,5 @@
-﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@model FPL_Showcase_WD.Models.EditFantasyTeamViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     Layout = null;
     var tokens = Antiforgery.GetAndStoreTokens(Context);
@@ -9,16 +10,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="@tokens.RequestToken" />
-    <title>Fantasy Team</title>
+    <title>Team aanpassen</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
+<body class="admin-body" data-team-id="@Model.Id" data-team-name="@Model.Name">
     <main class="page">
         <section class="card">
             <header class="team-header">
-                <h1 class="title">Fantasy team</h1>
+                <h1 class="title">@Model.Name</h1>
                 <div class="team-actions">
                     <button id="save-team" class="save-team" type="button" aria-label="Sla team op">Opslaan</button>
+                    <a class="logout-button" asp-action="All">Terug</a>
                     <form asp-controller="Login" asp-action="Logout" method="post">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="logout-button">Uitloggen</button>

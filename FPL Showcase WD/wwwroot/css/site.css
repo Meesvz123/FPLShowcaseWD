@@ -43,7 +43,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 12px
+    padding: 12px;
     border-radius: 12px;
     justify-content: space-evenly;
     min-height: 0;
@@ -82,6 +82,39 @@ body {
     position: relative;
     display: grid;
     place-items: center;
+}
+
+.slot-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    margin-top: 12px;
+}
+
+.slot-card {
+    display: grid;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.slot-label {
+    font-weight: 600;
+    color: #111827;
+}
+
+.slot-meta {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.slot-select {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #d6dae1;
+    background: #fff;
 }
 
 .slot-name {
@@ -219,4 +252,285 @@ body {
 .slot-remove:focus-visible {
     outline: 3px solid #1b5e20;
     outline-offset: 2px;
+}
+
+.admin-body {
+    overflow: auto;
+    background: radial-gradient(circle at top, #f8fafc 0%, #eef2f7 55%, #e7edf4 100%);
+}
+
+.page--admin {
+    padding: 24px;
+}
+
+.card--admin {
+    max-width: 1100px;
+    margin: 0 auto;
+    height: auto;
+    min-height: auto;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.admin-header {
+    align-items: flex-start;
+}
+
+.subtitle {
+    margin: -8px 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.table-wrap {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: auto;
+    background: #fff;
+}
+
+.team-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.team-table thead {
+    background: #eef2ff;
+    text-align: left;
+}
+
+.team-table th,
+.team-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.team-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.team-table tbody tr:hover {
+    background: #eef2ff;
+}
+
+.login-body {
+    background: #f6f7fb;
+    overflow: auto;
+}
+
+.page--login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.page--login .card {
+    width: min(420px, 100%);
+    height: auto;
+    border-radius: 16px;
+    padding: 28px;
+    background: #fff;
+    box-shadow: 0 20px 40px rgba(31, 41, 55, 0.12);
+}
+
+.login-form {
+    display: grid;
+    gap: 14px;
+}
+
+.login-form label {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.login-form label.login-remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d6dae1;
+    background: #f9fafb;
+}
+
+.login-form label.login-remember input {
+    margin: 0;
+}
+
+.login-remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-form button {
+    border: none;
+    background: #2563eb;
+    color: #fff;    
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background: #1d4ed8;
+}
+
+.validation-summary {
+    color: #b00020;
+    font-size: 13px;
+}
+
+.admin-stats {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: grid;
+    gap: 6px;
+}
+
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.auth-link {
+    margin: 4px 0 0;
+    font-size: 13px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.auth-link a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+.team-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout-button {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: #f1f5f9;
+}
+
+.admin-form {
+    display: grid;
+    gap: 14px;
+    max-width: 420px;
+}
+
+.admin-form label {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.admin-form input {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d6dae1;
+    background: #f9fafb;
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.action-link {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+}
+
+.action-link--danger {
+    color: #b00020;
+}
+
+.admin-formation .row {
+    gap: 24px;
+}
+
+.slot--admin {
+    border-style: solid;
+    background: #f8fafc;
+    gap: 6px;
+    min-height: 110px;
+    padding: 12px;
+    text-align: center;
+}
+
+.slot--admin .slot-label {
+    font-weight: 600;
+    font-size: 12px;
+    color: #111827;
+}
+
+.slot--admin .slot-meta {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.slot--admin .slot-select {
+    width: 100%;
+    border: 1px solid #d6dae1;
+    border-radius: 8px;
+    padding: 6px 8px;
+    background: #fff;
+    font-size: 12px;
 }

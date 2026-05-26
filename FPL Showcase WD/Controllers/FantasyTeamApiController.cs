@@ -15,18 +15,35 @@ public sealed class FantasyTeamApiController(AppDbContext db, UserManager<Applic
     public sealed record SwapRequest(int PlayerOutId, int PlayerInId);
 
     [HttpGet]
-    public async Task<ActionResult<FantasyTeamDto>> GetMyTeam()
+    public async Task<ActionResult<FantasyTeamDto>> GetMyTeam([FromQuery] int? teamId)
     {
-        var userId = userManager.GetUserId(User);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        FantasyTeam? team;
 
-        var team = await db.FantasyTeams
-            .Include(t => t.Slots)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+        if (teamId.HasValue)
+        {
+            if (!User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
+            team = await db.FantasyTeams
+                .Include(t => t.Slots)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == teamId.Value);
+        }
+        else
+        {
+            var userId = userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
+
+            team = await db.FantasyTeams
+                .Include(t => t.Slots)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+        }
 
         if (team is null)
         {
@@ -38,7 +55,7 @@ public sealed class FantasyTeamApiController(AppDbContext db, UserManager<Applic
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveTeam([FromBody] SaveFantasyTeamRequest request)
+    public async Task<IActionResult> SaveTeam([FromBody] SaveFantasyTeamRequest request, [FromQuery] int? teamId)
     {
         if (!ModelState.IsValid)
         {
@@ -67,31 +84,50 @@ public sealed class FantasyTeamApiController(AppDbContext db, UserManager<Applic
             return BadRequest("One or more players do not exist.");
         }
 
-        var userId = userManager.GetUserId(User);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        FantasyTeam? team;
 
-        var team = await db.FantasyTeams
-            .Include(t => t.Slots)
-            .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
-
-        if (team is null)
+        if (teamId.HasValue)
         {
-            team = new FantasyTeam
+            if (!User.IsInRole("Admin"))
             {
-                ApplicationUserId = userId,
-                Name = request.Name.Trim()
-            };
-            db.FantasyTeams.Add(team);
+                return Forbid();
+            }
+
+            team = await db.FantasyTeams
+                .Include(t => t.Slots)
+                .FirstOrDefaultAsync(t => t.Id == teamId.Value);
+
+            if (team is null)
+            {
+                return NotFound();
+            }
         }
         else
         {
-            team.Name = request.Name.Trim();
-            db.FantasyTeamSlots.RemoveRange(team.Slots);
-            team.Slots.Clear();
+            var userId = userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
+
+            team = await db.FantasyTeams
+                .Include(t => t.Slots)
+                .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+
+            if (team is null)
+            {
+                team = new FantasyTeam
+                {
+                    ApplicationUserId = userId,
+                    Name = request.Name.Trim()
+                };
+                db.FantasyTeams.Add(team);
+            }
         }
+
+        team.Name = request.Name.Trim();
+        db.FantasyTeamSlots.RemoveRange(team.Slots);
+        team.Slots.Clear();
 
         team.Slots = request.Slots.Select(s => new FantasyTeamSlot
         {
