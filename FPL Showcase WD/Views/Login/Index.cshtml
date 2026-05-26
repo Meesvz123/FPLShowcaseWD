@@ -11,13 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="@tokens.RequestToken" />
     <title>Login</title>
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-<main class="page">
-    <section class="card">
+<body class="login-body">
+<main class="page page--login">
+    <section class="card card--login">
         <h1 class="title">Login</h1>
-        <form method="post">
+        <form method="post" class="login-form">
             @Html.AntiForgeryToken()
             <label>
                 Email
@@ -27,12 +27,12 @@
                 Wachtwoord
                 <input asp-for="Password" type="password" autocomplete="current-password" />
             </label>
-            <label>
+            <label class="login-remember">
                 <input asp-for="RememberMe" type="checkbox" />
                 Onthoud mij
             </label>
             <button type="submit">Inloggen</button>
-            <div asp-validation-summary="All"></div>
+            <div asp-validation-summary="All" class="validation-summary"></div>
         </form>
     </section>
 </main>

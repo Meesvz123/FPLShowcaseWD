@@ -1,6 +1,8 @@
 @model IReadOnlyList<FPL_Showcase_WD.Models.FantasyTeam>
 @{
     Layout = null;
+    var totalTeams = Model?.Count ?? 0;
+    var totalPlayers = Model?.Sum(t => t.Slots.Count) ?? 0;
 }
 <!DOCTYPE html>
 <html lang="nl">
@@ -8,36 +10,52 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alle teams</title>
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-    <main class="page">
-        <section class="card">
-            <header class="team-header">
-                <h1 class="title">Alle teams</h1>
+<body class="admin-body">
+    <main class="page page--admin">
+        <section class="card card--admin">
+            <header class="team-header admin-header">
+                <div>
+                    <h1 class="title">Alle teams</h1>
+                    <p class="subtitle">Overzicht van alle ingediende fantasy teams.</p>
+                </div>
             </header>
 
-            <table class="team-table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Gebruiker</th>
-                        <th>Gemaakt</th>
-                        <th>Spelers</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var team in Model)
-                {
-                    <tr>
-                        <td>@team.Name</td>
-                        <td>@(team.ApplicationUser?.Email ?? "-")</td>
-                        <td>@team.CreatedAtUtc.ToLocalTime().ToString("g")</td>
-                        <td>@team.Slots.Count</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+            <section class="admin-stats" aria-label="Admin statistieken">
+                <div class="stat-card">
+                    <span class="stat-label">Teams</span>
+                    <span class="stat-value">@totalTeams</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Geselecteerde spelers</span>
+                    <span class="stat-value">@totalPlayers</span>
+                </div>
+            </section>
+
+            <div class="table-wrap">
+                <table class="team-table">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th>Gebruiker</th>
+                            <th>Gemaakt</th>
+                            <th>Spelers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var team in Model)
+                    {
+                        <tr>
+                            <td>@team.Name</td>
+                            <td>@(team.ApplicationUser?.Email ?? "-")</td>
+                            <td>@team.CreatedAtUtc.ToLocalTime().ToString("g")</td>
+                            <td>@team.Slots.Count</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 </body>
